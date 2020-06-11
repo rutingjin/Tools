@@ -5,13 +5,11 @@ import {
     Route
 } from "react-router-dom";
 import './App.css';
-import LoginModal from "./page/loginModal";
 import Home from './page/Home'
 
 const App = () => (
     <Router>
         <div className="App">
-            <LoginModal/>
             <Switch>
                 <Route path="/">
                     <Home />
