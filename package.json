@@ -2,9 +2,8 @@
   "name": "tool",
   "version": "1.0.0",
   "description": "a mini tool for merge data",
-  "private": true,
   "homepage": "./",
-  "main": "client/app.js",
+  "main": "./client/index.js",
   "build": {
     "appId": "com.tool.app",
     "productName": "Tool",
@@ -23,6 +22,11 @@
       "createStartMenuShortcut": true,
       "shortcutName": "tool"
     },
+    "files": [
+      "public/icon.ico",
+      "build/**/*",
+      "client/*"
+    ],
     "win": {
       "icon": "public/icon.ico",
       "target": [
@@ -41,8 +45,8 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "run:dev": "set ELECTRON_START_URL=http://localhost:3000 && electron client/app.js",
-    "run": "electron client/app.js",
+    "run:dev": "set ELECTRON_START_URL=http://localhost:3000 && electron client/index.js",
+    "run": "electron client/index.js",
     "build": "react-app-rewired build",
     "eject": "react-app-rewired eject",
     "pack": "electron-builder"

@@ -1,4 +1,4 @@
-const {app, BrowserWindow } = require('electron');
+const {app, BrowserWindow, Menu } = require('electron');
 const url = require('url')
 const path = require('path')
 const { listen } = require('./ipc')
@@ -19,6 +19,7 @@ app.on('ready', function() {
         protocol: 'file:',
         slashes: true
     });
+    Menu.setApplicationMenu(null)
     mainWindow.loadURL(startUrl);
     listen() // 监听渲染线程
     mainWindow.on('closed', function() {
