@@ -1,21 +1,47 @@
 {
-  "name": "tools-web",
-  "version": "0.1.0",
+  "name": "tool",
+  "version": "1.0.0",
+  "description": "a mini tool for merge data",
   "private": true,
+  "build": {
+    "appId": "com.tool.app",
+    "productName": "Tool",
+    "directories": {
+      "output": "package"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "public/icon.ico",
+      "uninstallerIcon": "public/icon.ico",
+      "installerHeaderIcon": "public/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "tool"
+    },
+    "win": {
+      "icon": "public/icon.ico",
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    }
+  },
   "dependencies": {
     "antd": "^4.3.2",
-    "electron": "^9.0.3",
     "iconv-lite": "^0.6.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1"
+    "react-router-dom": "^5.2.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "run": "set ELECTRON_START_URL=http://localhost:3000 && electron client/app.js",
     "build": "react-app-rewired build",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "pack": "electron-builder"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -33,6 +59,9 @@
     ]
   },
   "devDependencies": {
-    "react-app-rewired": "^2.1.6"
+    "electron": "^9.0.3",
+    "electron-builder": "^22.7.0",
+    "react-app-rewired": "^2.1.6",
+    "react-scripts": "3.4.1"
   }
 }
