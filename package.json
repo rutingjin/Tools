@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "a mini tool for merge data",
   "private": true,
+  "homepage": "./",
+  "main": "client/app.js",
   "build": {
     "appId": "com.tool.app",
     "productName": "Tool",
     "directories": {
       "output": "package"
     },
+    "extends": null,
     "nsis": {
       "oneClick": false,
       "allowElevation": true,
@@ -38,7 +41,8 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "run": "set ELECTRON_START_URL=http://localhost:3000 && electron client/app.js",
+    "run:dev": "set ELECTRON_START_URL=http://localhost:3000 && electron client/app.js",
+    "run": "electron client/app.js",
     "build": "react-app-rewired build",
     "eject": "react-app-rewired eject",
     "pack": "electron-builder"
