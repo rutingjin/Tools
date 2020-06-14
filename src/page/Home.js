@@ -169,13 +169,11 @@ export default function Home() {
 
     const updateColumns = list => {
         const data = columns.filter(item => list.indexOf(item.title) > -1)
-        console.log(data, list)
         setTableColumns(data)
     }
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             checkList = selectedRows
             setMergeButtonStatus(checkList.length === 0)
         },
@@ -222,7 +220,7 @@ export default function Home() {
                         <SelectColumns updateConfig={updateColumns}/>
                         <Table
                             columns={tableColumns}
-                            dataSource={mergeData}
+                            dataSource={tableData}
                             pagination={false}
                         />
                     </div>

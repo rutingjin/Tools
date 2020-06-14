@@ -103,7 +103,11 @@ export function mergeRowByData (data) {
                 case '教研二审通过量':
                 case '待教研二审量':
                     // 合并
-                    result[type] = (Number.isNaN(current[type]) ? 0 : Number(current[type])) + (Number.isNaN(result[type]) ? 0 : Number(result[type]))
+                    if (i === 0) {
+                        result[type] = current[type]
+                    } else {
+                        result[type] = (Number.isNaN(current[type]) ? 0 : Number(current[type])) + (Number.isNaN(result[type]) ? 0 : Number(result[type]))
+                    }
                     break;
                 default:
                     break;
