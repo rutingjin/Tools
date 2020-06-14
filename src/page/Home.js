@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
-import {Table, Row, Col, Button} from 'antd';
+import { Table, Button, Steps, Alert } from 'antd';
 import { emit } from '../store/ipc'
-const { remote } = require('electron')
+import './Home.css'
+import { compareDataByConfig, mergeRowByData } from '../util/compare'
+import SelectColumns from "./SelectColumns";
+
+const {remote} = require('electron')
+
 
 const columns = [
     {
@@ -25,10 +30,6 @@ const columns = [
         "dataIndex": "排版地区"
     },
     {
-        "title": "整体进度",
-        "dataIndex": "整体进度"
-    },
-    {
         "title": "入库量",
         "dataIndex": "入库量"
     },
@@ -41,10 +42,6 @@ const columns = [
         "dataIndex": "废弃量"
     },
     {
-        "title": "题源获取进度",
-        "dataIndex": "题源获取进度"
-    },
-    {
         "title": "百川待解答",
         "dataIndex": "百川待解答"
     },
@@ -55,10 +52,6 @@ const columns = [
     {
         "title": "生产前待人工判重题量",
         "dataIndex": "生产前待人工判重题量"
-    },
-    {
-        "title": "排版进度",
-        "dataIndex": "排版进度"
     },
     {
         "title": "排版提交量",
@@ -77,10 +70,6 @@ const columns = [
         "dataIndex": "报错题量"
     },
     {
-        "title": "运营一审进度",
-        "dataIndex": "运营一审进度"
-    },
-    {
         "title": "运营一审通过量",
         "dataIndex": "运营一审通过量"
     },
@@ -91,10 +80,6 @@ const columns = [
     {
         "title": "驳回待运营一审量",
         "dataIndex": "驳回待运营一审量"
-    },
-    {
-        "title": "运营二审进度",
-        "dataIndex": "运营二审进度"
     },
     {
         "title": "运营二审通过量",
@@ -109,32 +94,12 @@ const columns = [
         "dataIndex": "驳回待运营二审量"
     },
     {
-        "title": "教研一审进度",
-        "dataIndex": "教研一审进度"
-    },
-    {
         "title": "教研一审通过量",
         "dataIndex": "教研一审通过量"
     },
     {
         "title": "待教研一审量",
         "dataIndex": "待教研一审量"
-    },
-    {
-        "title": "驳回待教研一审量【排版】",
-        "dataIndex": "驳回待教研一审量【排版】"
-    },
-    {
-        "title": "驳回待教研一审量【教研二审】",
-        "dataIndex": "驳回待教研一审量【教研二审】"
-    },
-    {
-        "title": "教研一审驳回后未处理【排版】",
-        "dataIndex": "教研一审驳回后未处理【排版】"
-    },
-    {
-        "title": "教研二审进度",
-        "dataIndex": "教研二审进度"
     },
     {
         "title": "教研二审通过量",
@@ -144,65 +109,143 @@ const columns = [
         "title": "待教研二审量",
         "dataIndex": "待教研二审量"
     },
-    {
-        "title": "驳回待教研二审量【排版】",
-        "dataIndex": "驳回待教研二审量【排版】"
-    },
-    {
-        "title": "驳回待教研二审量【教研一审】",
-        "dataIndex": "驳回待教研二审量【教研一审】"
-    },
-    {
-        "title": "教研二审驳回后未处理【排版】",
-        "dataIndex": "教研二审驳回后未处理【排版】"
-    },
-    {
-        "title": "教研二审驳回后未处理【教研一审】",
-        "dataIndex": "教研二审驳回后未处理【教研一审】"
-    }
 ];
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+const {Step} = Steps;
+const steps = [
+    {
+        title: '第一步',
+        content: '上传前一天的数据',
     },
-    getCheckboxProps: record => ({
-        disabled: !!record.disabled
-    }),
+    {
+        title: '第二步',
+        content: '上传今天的数据',
+    },
+    {
+        title: '比较数据',
+        content: '开始比较',
+    }
+]
+let compare = {
+    pre: [],
+    next: [],
+    config: []
 }
-
 
 
 export default function Home() {
     const [tableData, setData] = useState([])
-    const uploadFile = async () => {
-        const {canceled, filePaths} = await remote.dialog.showOpenDialog({ properties: [ 'openFile' ] })
+    const [mergeData, setMergeData] = useState([])
+    const [tableColumns, setTableColumns] = useState(columns)
+    const [current, setCurrent] = useState(0)
+    const [mergeButtonStatus, setMergeButtonStatus] = useState(true)
+    let checkList = []
+
+
+    const uploadFile = async (type) => {
+        const {canceled, filePaths} = await remote.dialog.showOpenDialog({properties: ['openFile']})
         if (!canceled) {
-            emit('readFile', filePaths[0]).then(data => {
-                setData(data.data.table.map((item, index) => {
-                    item.key = index
-                    return item
-                }))
-            })
+            const data = await emit('readFile', filePaths[0])
+            if (type === 'pre') {
+                compare.pre = data.data.table
+                setCurrent(1)
+            } else if (type === 'next') {
+                compare.next = data.data.table
+                compare.config = data.data.columns
+                setCurrent(2)
+            }
         }
     }
 
+    const compareData = () => {
+        const data = compareDataByConfig(compare)
+        const defaultData = data.map((item, index) => {
+            item.key = index
+            return item
+        })
+        setData(defaultData)
+        setMergeData(defaultData)
+        setCurrent(3)
+    }
+
+    const updateColumns = list => {
+        const data = columns.filter(item => list.indexOf(item.title) > -1)
+        console.log(data, list)
+        setTableColumns(data)
+    }
+
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            checkList = selectedRows
+            setMergeButtonStatus(checkList.length === 0)
+        },
+        getCheckboxProps: record => ({
+            disabled: !!record.disabled
+        }),
+    }
+
+    const onMergeData = () => {
+        if (checkList.length === 0) return
+        const hasMergeData = mergeRowByData(checkList)
+        const hasMergeTableData = mergeData.filter(item => checkList.indexOf(item) === -1)
+        hasMergeTableData.unshift(hasMergeData)
+        setMergeData(hasMergeTableData.map((item, key) => {
+            item.key = 'merge'+key
+            return item
+        }))
+    }
+
     return (
-        <section style={{ padding: '20px' }}>
-            <Row style={{ marginBottom: '20px' }}>
-                <Col span={24}>
-                    <Button onClick={ () => { uploadFile() } }>上传文件-1</Button>
-                    <Button>上传文件-2</Button>
-                </Col>
-            </Row>
+        <section style={{padding: '20px'}}>
+            {current < 3 ? (
+                <div>
+                    <Steps current={current}>
+                        {steps.map(item => (
+                            <Step key={item.title} title={item.title}/>
+                        ))}
+                    </Steps>
+                    <div className="steps-content">{steps[current].content}</div>
+                </div>
+            ) : ''}
+            {current === 0 ? <Button type={"primary"} block onClick={() => {
+                uploadFile('pre')
+            }}>上传文件</Button> : ''}
+            {current === 1 ? <Button type={"primary"} block onClick={() => {
+                uploadFile('next')
+            }}>上传文件</Button> : ''}
+            {current === 2 ? <Button type={"primary"} block onClick={() => {
+                compareData()
+            }}>比较数据</Button> : ''}
             {
-                tableData.length > 0 ? (<Table
-                    rowSelection={{
-                        type: 'checkbox',
-                        ...rowSelection,
-                    }}
-                    columns={columns}
-                    dataSource={tableData}
-                />) : ''
+                current === 3 && tableData.length > 0 ? (
+                    <div>
+                        <SelectColumns updateConfig={updateColumns}/>
+                        <Table
+                            columns={tableColumns}
+                            dataSource={mergeData}
+                            pagination={false}
+                        />
+                    </div>
+                ) : ''
+            }
+            {
+                current === 3 && mergeData.length > 0 ? (
+                    <div className={'merge-data-user'}>
+                        <div className={'tool-box'}>
+                            <Alert message="合并操作不可逆！" type="warning" className={'alert-merge-operation'}/>
+                            <Button disabled={mergeButtonStatus} type="primary" danger onClick={onMergeData}>合并行</Button>
+                        </div>
+                        <Table
+                            rowSelection={{
+                                type: 'checkbox',
+                                ...rowSelection
+                            }}
+                            columns={tableColumns}
+                            dataSource={mergeData}
+                            pagination={false}
+                        />
+                    </div>
+                ) : ''
             }
         </section>
 
