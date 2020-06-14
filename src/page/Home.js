@@ -130,15 +130,18 @@ let compare = {
     next: [],
     config: []
 }
+let checkList = []
+const queue = []
 
 
 export default function Home() {
     const [tableData, setData] = useState([])
     const [mergeData, setMergeData] = useState([])
+    const [selectedRowKeys, setSelectedRowKeys] = useState([])
     const [tableColumns, setTableColumns] = useState(columns)
     const [current, setCurrent] = useState(0)
     const [mergeButtonStatus, setMergeButtonStatus] = useState(true)
-    let checkList = []
+    const [resetButtonStatus, setResetButtonStatus] = useState(true)
 
 
     const uploadFile = async (type) => {
@@ -174,7 +177,8 @@ export default function Home() {
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            checkList = selectedRows
+            setSelectedRowKeys(selectedRowKeys)
+            checkList = selectedRows.map(item => item)
             setMergeButtonStatus(checkList.length === 0)
         },
         getCheckboxProps: record => ({
@@ -187,10 +191,23 @@ export default function Home() {
         const hasMergeData = mergeRowByData(checkList)
         const hasMergeTableData = mergeData.filter(item => checkList.indexOf(item) === -1)
         hasMergeTableData.unshift(hasMergeData)
-        setMergeData(hasMergeTableData.map((item, key) => {
+        const newData = hasMergeTableData.map((item, key) => {
             item.key = 'merge'+key
             return item
-        }))
+        })
+        // 记录之前一步的数据
+        queue.push(mergeData)
+        setResetButtonStatus(queue.length === 0)
+        setMergeData(newData)
+        setSelectedRowKeys([])
+    }
+
+    const onResetData = () => {
+        if (queue.length === 0) return
+        const data = queue.pop()
+        setResetButtonStatus(queue.length === 0)
+        setMergeData(data.map(item => item))
+        setSelectedRowKeys([])
     }
 
     return (
@@ -230,12 +247,12 @@ export default function Home() {
                 current === 3 && mergeData.length > 0 ? (
                     <div className={'merge-data-user'}>
                         <div className={'tool-box'}>
-                            <Alert message="合并操作不可逆！" type="warning" className={'alert-merge-operation'}/>
                             <Button disabled={mergeButtonStatus} type="primary" danger onClick={onMergeData}>合并行</Button>
+                            <Button disabled={resetButtonStatus} type="primary" danger onClick={onResetData} className={'restButton'}>还原上一步</Button>
                         </div>
                         <Table
                             rowSelection={{
-                                type: 'checkbox',
+                                selectedRowKeys,
                                 ...rowSelection
                             }}
                             columns={tableColumns}
