@@ -19,7 +19,7 @@ app.on('ready', function() {
         protocol: 'file:',
         slashes: true
     });
-    // Menu.setApplicationMenu(null)
+    Menu.setApplicationMenu(null)
     mainWindow.loadURL(startUrl);
     listen() // 监听渲染线程
     mainWindow.on('closed', function() {
