@@ -2,7 +2,7 @@ export function compareDataByConfig (data) {
     const CompareResult = []
     for (let i = 0, len = data.next.length; i < len; i++) {
         const next = data.next[i]
-        const pre = data.pre[i]
+        const pre = i < data.pre.length ? data.pre[i] : {}
         const result = {}
         data.config.forEach(key => {
             switch (key) {
@@ -32,7 +32,7 @@ export function compareDataByConfig (data) {
                 case '运营二审通过量':
                 case '教研一审通过量':
                 case '教研二审通过量':
-                    result[key] = next[key] - pre[key]
+                    result[key] = (Number.isNaN(next[key]) ? 0 : next[key]) - (Number.isNaN(pre[key]) ? 0 : pre[key])
                     // 参与比较
                     break;
                 case '学部':

@@ -210,6 +210,19 @@ export default function Home() {
         setSelectedRowKeys([])
     }
 
+    const onFilterNegative = () => {
+        const hasFilterData = mergeData.filter(item => !Object.keys(item).some(key => {
+            if (Object.prototype.hasOwnProperty.call(item, key)) {
+                if (!Number.isNaN(item[key])) {
+                    return Number(item[key]) < 0
+                }
+                return false
+            }
+            return false
+        }))
+        setMergeData(hasFilterData)
+    }
+
     return (
         <section style={{padding: '20px'}}>
             {current < 3 ? (
@@ -249,6 +262,7 @@ export default function Home() {
                         <div className={'tool-box'}>
                             <Button disabled={mergeButtonStatus} type="primary" danger onClick={onMergeData}>合并行</Button>
                             <Button disabled={resetButtonStatus} type="primary" danger onClick={onResetData} className={'restButton'}>还原上一步</Button>
+                            <Button type="primary" danger onClick={onFilterNegative}>过滤负值</Button>
                         </div>
                         <Table
                             rowSelection={{
