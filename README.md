@@ -1,2 +1,2 @@
 # Tools
-A tool for my own use
+My own tool
