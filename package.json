@@ -1,0 +1,73 @@
+{
+  "name": "tool",
+  "version": "1.0.0",
+  "description": "a mini tool for merge data",
+  "homepage": "./",
+  "main": "./client/index.js",
+  "build": {
+    "appId": "com.tool.app",
+    "productName": "Tool",
+    "directories": {
+      "output": "package"
+    },
+    "extends": null,
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "public/icon.ico",
+      "uninstallerIcon": "public/icon.ico",
+      "installerHeaderIcon": "public/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "tool"
+    },
+    "files": [
+      "public/icon.ico",
+      "build/**/*",
+      "client/*"
+    ],
+    "win": {
+      "icon": "public/icon.ico",
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "antd": "^4.3.2",
+    "iconv-lite": "^0.6.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "run": "set ELECTRON_START_URL=http://localhost:3000 && electron client/index.js",
+    "build": "react-app-rewired build",
+    "pack": "electron-builder"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^9.0.3",
+    "electron-builder": "^22.7.0",
+    "react-app-rewired": "^2.1.6",
+    "react-scripts": "3.4.1"
+  }
+}

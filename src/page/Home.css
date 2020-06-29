@@ -1,0 +1,43 @@
+.steps-content {
+    margin-top: 16px;
+    border: 1px dashed #e9e9e9;
+    border-radius: 2px;
+    background-color: #fafafa;
+    min-height: 200px;
+    text-align: center;
+    padding-top: 80px;
+}
+
+.check-box-wrap {
+    overflow: hidden;
+}
+
+.site-checkbox-all-wrapper {
+    text-align: left;
+    width: 50%;
+    line-height: 30px;
+    border-bottom: 1px solid #ccc;
+}
+
+.checkbox-item-list {
+    text-align: left;
+    width: 50%;
+    line-height: 30px;
+    float: left;
+    margin-bottom: 30px;
+}
+
+.tool-box {
+    text-align: left;
+    line-height: 20px;
+    padding: 10px 0;
+}
+
+.merge-data-user {
+    margin-top: 20px;
+}
+
+.restButton {
+    margin-left: 20px;
+    margin-right: 20px;
+}
